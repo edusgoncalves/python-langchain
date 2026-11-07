@@ -1,6 +1,6 @@
 from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
-from langchain_core.output_parsers import JsonOutputParser
+from langchain_core.output_parsers import PydanticOutputParser
 from langchain.globals import set_debug
 from pydantic import BaseModel, Field
 from dotenv import load_dotenv
@@ -12,7 +12,7 @@ api_key = os.getenv("OLLAMA_API_KEY")
 api_url = os.getenv("OLLAMA_API_URL")
 model=os.getenv("OLLAMA_MODEL")
 
-set_debug(True)
+set_debug(False)
 
 # Limpeza da tela
 if os.name == 'nt':
@@ -45,10 +45,16 @@ class Destino(BaseModel):
     motivo: str = Field(..., description="Motivo pelo qual a cidade foi sugerida") 
 
 
-parseador = JsonOutputParser(pydantic_object=Destino)
+parseador = PydanticOutputParser(pydantic_object=Destino)
 
-prompt_modelo = PromptTemplate(template=""" Sugira uma cidade dado o meu interesse por {interesse}.
+prompt_modelo = PromptTemplate(template="""
+Sugira uma cidade dado o meu interesse por {interesse}.
+Responda com uma sugestão concreta e explique por que essa cidade atende ao interesse.
 {formato_saida}
+Retorne somente o objeto JSON preenchido com os campos "cidade" e "motivo".
+Não retorne o esquema JSON nem campos como "properties" ou "required".
+Exemplo de resposta para interesse em museus:
+{{"cidade": "Paris", "motivo": "Possui museus como o Louvre e o Musée d'Orsay."}}
 """
                                , input_variables=["interesse"],
                                partial_variables={"formato_saida": parseador.get_format_instructions()})
@@ -60,9 +66,10 @@ modelo=ChatOpenAI(model=model,
                   api_key=api_key)
 
 cadeia=prompt_modelo | modelo | parseador
+print("\nConsultando o Ollama; aguarde a geração da resposta...", flush=True)
 resposta=cadeia.invoke({
     "interesse": "praia"
 })
-
-print(resposta)
+print(f"\nCidade: {resposta.cidade}")
+print(f"Motivo: {resposta.motivo}")
 
