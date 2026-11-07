@@ -1,5 +1,6 @@
 from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
+from langchain_core.output_parsers import StrOutputParser
 from dotenv import load_dotenv
 import os
 import subprocess
@@ -32,29 +33,22 @@ if not model or not model.strip():
 
 print("Modelo carregado com sucesso!")
 
-numero_dias = 5
-numero_criancas = 2
-atividades = "praia"
-cidade = "Lisboa"
 
-modelo_prompt = PromptTemplate.from_template("""
-                                    Crie um roteiro de viagem de {dias} dias,
-                                    para uma familia com {numero_criancas} criancas,
-                                    que gostam de {atividade}
-                                """)
+modelo_prompt = PromptTemplate(template="Sugira uma cidade dado o meu interesse por {interesse}."
+                               , input_variables=["interesse"])
 
-prompt=modelo_prompt.format(dias=numero_dias,
-                              numero_criancas=numero_criancas,
-                              atividade=atividades)
-print(f"Prompt gerado: {prompt}\n")
-
+interesse="praias"
+prompt_cidade=modelo_prompt.format(interesse=interesse)
+print(f"\nPrompt gerado: {prompt_cidade}\n")
 modelo=ChatOpenAI(model=model,
                   temperature=0.5,
                   base_url=api_url,
                   api_key=api_key)
 
+cadeia=modelo_prompt | modelo | StrOutputParser()
+resposta=cadeia.invoke({
+    "interesse": interesse
+})
 
-resposta=modelo.invoke(prompt)
-
-print(resposta.content)
+print(resposta)
 
