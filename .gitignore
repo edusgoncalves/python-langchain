@@ -1,0 +1,77 @@
+# ==========================================
+# Ambientes Virtuais (Virtual Environments)
+# ==========================================
+# Seu ambiente virtual específico nomeado 'langchain'
+langchain/
+langchain*/
+
+# Nomes padrões de ambientes virtuais
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# ==========================================
+# Variáveis de Ambiente e Segredos (API Keys)
+# ==========================================
+# Chaves de API (OpenAI, Anthropic, HuggingFace, etc.)
+.env
+.env.*
+!.env.example
+*.env
+
+# ==========================================
+# VS Code
+# ==========================================
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# ==========================================
+# Byte-compiled / Cache do Python
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# ==========================================
+# Armazenamento Local de IA / Vetores / Modelos
+# ==========================================
+# Bancos de vetores locais comuns (Chroma, FAISS, etc.)
+chroma_db/
+*.chroma/
+faiss_index/
+*.index
+
+# Caches de modelos e downloads locais
+.cache/
+hf_cache/
+models/
+weights/
+*.onnx
+*.bin
+*.pt
+*.pth
+
+# Jupyter Notebooks (checkpoints)
+.ipynb_checkpoints/
+
+# ==========================================
+# Logs e Banco de Dados Locais
+# ==========================================
+*.log
+*.sqlite
+*.sqlite3
+sqlite/
+
+# ==========================================
+# Arquivos de Sistema Operacional
+# ==========================================
+.DS_Store
+Thumbs.db
